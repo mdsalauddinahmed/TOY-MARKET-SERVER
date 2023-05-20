@@ -1,6 +1,6 @@
 const express= require('express')
 const cors =require('cors')
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const app= express()
 const port = process.env.PORT || 5000;
@@ -28,6 +28,43 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    const AllToysCollection =client.db("allToys").collection("toys")
+   
+
+    app.post("/addToys",async(req,res)=>{
+        const toys = req.body;
+        //  console.log(toys)
+         const result = await AllToysCollection.insertOne(toys)
+         res.send(result)
+         
+      })
+
+      app.get("/allToys",async(req,res)=>{
+        const result = await AllToysCollection.find({}).toArray()
+        res.send(result)
+      })
+     
+      app.get("/allToysByCategory/:category", async (req, res) => {
+        // console.log(req.params.id);
+        const toys = await AllToysCollection
+          .find({
+            category: req.params.category,
+          })
+          .toArray();
+        res.send(toys);
+      });
+
+      app.get('/toys/:id',async(req,res) =>{
+        const id= req.params.id
+         const query ={_id: new ObjectId(id)}
+          
+         const result = await AllToysCollection.findOne(query)
+         res.send(result)
+    });
+
+
+
 
 //    console.log(uri)
 
