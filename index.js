@@ -45,6 +45,19 @@ async function run() {
         res.send(result)
       })
      
+      app.get('/myToys',async(req,res)=>{
+
+        console.log(req.query.email)
+        let query ={};
+        if(req.query?.email){
+          query = {email: req.query.email}
+        }
+        const result = await AllToysCollection.find(query).toArray();
+        res.send(result)
+       })
+
+
+
       app.get("/allToysByCategory/:category", async (req, res) => {
         // console.log(req.params.id);
         const toys = await AllToysCollection
